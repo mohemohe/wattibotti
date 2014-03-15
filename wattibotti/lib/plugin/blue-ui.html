@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<!--
+	Title: Almight blue UIテーマ
+	Author: EISYS, Inc. <http://almight.jp>
+	Licence: MIT License
+-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<base href="../"></base>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<script src="dest/almight.lib.js"></script>
+
+<!--
+	******** ゲームに読み込まれるCSS ********
+-->
+	<style type="text/css" data-append="yes">
+
+	/* **********************
+	 *  ナビゲーションバー
+	 * **********************/
+	.almight-navbar {
+		width: 100%;
+		height: 40px;
+		color: #fff;
+		text-align: left;
+		background: rgb(99,182,219);
+		background: -moz-linear-gradient(top, rgba(99,182,219,1) 0%, rgba(48,157,207,.7) 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(99,182,219,.7)), color-stop(100%,rgba(48,157,207,1)));
+		background: -webkit-linear-gradient(top, rgba(99,182,219,1) 0%,rgba(48,157,207,.7) 100%);
+		background: -o-linear-gradient(top, rgba(99,182,219,1) 0%,rgba(48,157,207,.7) 100%);
+		background: -ms-linear-gradient(top, rgba(99,182,219,1) 0%,rgba(48,157,207,.7) 100%);
+		background: linear-gradient(to bottom, rgba(99,182,219,1) 0%,rgba(48,157,207,.7) 100%);
+	}
+
+	.almight-navbar span {
+		line-height: 40px;
+		font-size: 20px;
+		text-shadow: -1px -1px 2px rgba(0, 0, 0, 0.4);
+	}
+
+	@media screen and (min-width: 630px) {
+		.almight-navbar {
+			height: 70px;
+		}
+
+		.almight-navbar span {
+			line-height: 70px;
+			font-size: 30px;
+		}
+	}
+
+
+	/* **********************
+	 *  ダイアログボックス
+	 * **********************/
+	#almight-dialog-window {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 80000;
+		background-color: rgba(0,0,0,.8);
+		opacity: 0;
+	}
+
+	#almight-dialog-window .box {
+		display: table-cell;
+		vertical-align: middle;
+	}
+
+	.almight-dialog {
+		width: 400px;
+		max-width: 90%;
+		min-height: 80px;
+		margin: auto;
+		padding: 10px;
+		color: #333333;
+		font-size: 1.1em;
+		border: 6px solid #fff;
+		border-radius: 10px;
+		opacity: 0;
+		background: #ffffff;
+		background: -webkit-gradient(linear, left top, left bottom, from(#eaeaea), to(#ffffff));
+		background: -webkit-linear-gradient(#eaeaea 0%, #ffffff 100%);
+		background: -moz-linear-gradient(#eaeaea 0%, #ffffff 100%);
+		background: -ms-linear-gradient(#eaeaea 0%, #ffffff 100%);
+		background: -o-linear-gradient(#eaeaea 0%, #ffffff 100%);
+		background: linear-gradient(#eaeaea 0%, #ffffff 100%);
+		box-shadow: 0 3px 20px rgba(0,0,0,.5);
+	}
+
+	.almight-dialog-text {
+		text-align: center;
+		padding-top: 10px;
+		cursor: default;
+	}
+
+	/* ボタンを入れるボックス */
+	.almight-dialog-buttonbox {
+		margin-top: 20px;
+		text-align: center;
+	}
+
+
+	/* **********************
+	 *  ゲームに戻るボタン
+	 * **********************/
+	.back-button {
+		display: inline-block;
+		float: left;
+		text-align: center;
+		margin: 3px 6px;
+		font-size: 13px;
+		line-height: 30px;
+		height: 30px;
+		min-width: 100px;
+		background: #4479ba;
+		color: #fff;
+		border-radius: 4px;
+		border: solid 1px #20538d;
+		cursor: pointer;
+		text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 1px 1px rgba(0, 0, 0, 0.2);
+	}
+	.back-button:hover {
+		background: #356094;
+		border: solid 1px #2A4E77;
+		text-decoration: none;
+	}
+	.back-button:active {
+		box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+		background: #2E5481;
+		border: solid 1px #203E5F;
+	}
+
+	@media screen and (min-width: 630px) {
+		.back-button {
+			margin: 10px;
+			padding: 0 10px;
+			font-size: 20px;
+			line-height: 47px;
+			height: 47px;
+		}
+	}
+
+
+	/* **********************
+	 *  choices選択肢
+	 * **********************/
+	#almight-choices-window .ui-choices {
+		width: 50%;
+		height: 2em;
+		margin: 2.5em auto;
+		color: #000;
+		text-align: center;
+		text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+		font-size: 1.45em;
+		line-height: 2em;
+		cursor: pointer;
+		border: 4px solid #fff;
+		border-radius: 20px;
+		background: rgb(178,225,255);
+		box-shadow: inset 0 1px 2px rgba(0,0,0,0.3) ,0 1px 8px rgba(0,0,0,0.7);
+		/* 表示アニメーション */
+		-webkit-animation-duration: 1s;
+		   -moz-animation-duration: 1s;
+		     -o-animation-duration: 1s;
+		        animation-duration: 1s;
+		-webkit-animation-fill-mode: both;
+		   -moz-animation-fill-mode: both;
+		     -o-animation-fill-mode: both;
+		        animation-fill-mode: both;
+		-webkit-animation-name: fadeInLeft;
+		-moz-animation-name: fadeInLeft;
+		-o-animation-name: fadeInLeft;
+		animation-name: fadeInLeft;
+	}
+
+	#almight-choices-window .ui-choices:hover {
+		background: rgb(142,192,237);
+	}
+
+	#almight-choices-window .ui-choices:active {
+		background: rgb(130,155,224);
+	}
+
+	@-webkit-keyframes fadeInLeft {
+		0% {
+			opacity: 0;
+			-webkit-transform: translateX(-20px);
+		}
+
+		100% {
+			opacity: 1;
+			-webkit-transform: translateX(0);
+		}
+	}
+
+	@-moz-keyframes fadeInLeft {
+		0% {
+			opacity: 0;
+			-moz-transform: translateX(-20px);
+		}
+
+		100% {
+			opacity: 1;
+			-moz-transform: translateX(0);
+		}
+	}
+
+	@-o-keyframes fadeInLeft {
+		0% {
+			opacity: 0;
+			-o-transform: translateX(-20px);
+		}
+
+		100% {
+			opacity: 1;
+			-o-transform: translateX(0);
+		}
+	}
+
+	@keyframes fadeInLeft {
+		0% {
+			opacity: 0;
+			transform: translateX(-20px);
+		}
+
+		100% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+	}
+
+	/* **********************
+	 *  UIボタン
+	 * **********************/
+	.ui-button {
+		display: inline-block;
+		width: 150px;
+		height: auto;
+		padding: 5px;
+		margin: 8px;
+		background-color: #dddddd;
+		border: 1px solid #d2d2d2;
+		border-radius: 4px;
+		-webkit-box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
+		box-shadow: inset 1px 1px 3px rgba(0,0,0,0.2);
+		cursor: pointer;
+	}
+
+	/* 通常ボタン */
+	.ui-button span {
+		display: block;
+		width: 100%;
+		height: 40px;
+		color: #fff;
+		font-size: 1.2em;
+		text-align: center;
+		text-shadow: 0 -1px 0 rgba(0,0,0,0.5);
+		line-height: 40px;
+		border: 1px solid #7c7c7c;
+		border-radius: 4px;
+		background: #86888b;
+		background: -webkit-gradient(linear, left top, left bottom, from(#86888b), to(#66686b));
+		background: -webkit-linear-gradient(#86888b 0%, #66686b 100%);
+		background: -moz-linear-gradient(#86888b 0%, #66686b 100%);
+		background: -ms-linear-gradient(#86888b 0%, #66686b 100%);
+		background: -o-linear-gradient(#86888b 0%, #66686b 100%);
+		background: linear-gradient(#86888b 0%, #66686b 100%);
+		-webkit-box-shadow: inset 0 1px 3px rgba(255,255,255,0.3), 1px 1px 4px rgba(0,0,0,0.4);
+		box-shadow: inset 0 1px 3px rgba(255,255,255,0.3), 1px 1px 4px rgba(0,0,0,0.4);
+	}
+
+	/* 決定ボタン */
+	.ui-button.done span {
+		border: 1px solid #2e90e4;
+		background: #3eb0fc;
+		background: -webkit-gradient(linear, left top, left bottom, from(#3eb0fc), to(#2496fa));
+		background: -webkit-linear-gradient(#3eb0fc 0%, #2496fa 100%);
+		background: -moz-linear-gradient(#3eb0fc 0%, #2496fa 100%);
+		background: -ms-linear-gradient(#3eb0fc 0%, #2496fa 100%);
+		background: -o-linear-gradient(#3eb0fc 0%, #2496fa 100%);
+		background: linear-gradient(#3eb0fc 0%, #2496fa 100%);
+	}
+
+	/* ボタン（Hover） */
+	.ui-button:hover span {
+		-webkit-box-shadow: inset 0 0 10px rgba(255,255,255,0.6), 1px 1px 4px rgba(0,0,0,0.4);
+		box-shadow: inset 0 0 10px rgba(255,255,255,0.6), 1px 1px 4px rgba(0,0,0,0.4);
+	}
+
+	/* 通常ボタン（Active） */
+	.ui-button:active span {
+		border: 1px solid rgba(0,0,0,0);
+		background: #65686b;
+		background: -webkit-gradient(linear, left top, left bottom, from(#65686b), to(#878a8d));
+		background: -webkit-linear-gradient(#65686b 0%, #878a8d 100%);
+		background: -moz-linear-gradient(#65686b 0%, #878a8d 100%);
+		background: -ms-linear-gradient(#65686b 0%, #878a8d 100%);
+		background: -o-linear-gradient(#65686b 0%, #878a8d 100%);
+		background: linear-gradient(#65686b 0%, #878a8d 100%);
+		-webkit-box-shadow: inset 0 3px 10px rgba(0,0,0,0.2), 1px 1px 4px rgba(0,0,0,0.4);
+		box-shadow: inset 0 3px 10px rgba(0,0,0,0.2), 1px 1px 4px rgba(0,0,0,0.4);
+	}
+
+	/* 決定ボタン（Active） */
+	.ui-button.done:active span {
+		border: 1px solid rgba(0,0,0,0);
+		background: #2395fa;
+		background: -webkit-gradient(linear, left top, left bottom, from(#2395fa), to(#3fb0fc));
+		background: -webkit-linear-gradient(#2395fa 0%, #3fb0fc 100%);
+		background: -moz-linear-gradient(#2395fa 0%, #3fb0fc 100%);
+		background: -ms-linear-gradient(#2395fa 0%, #3fb0fc 100%);
+		background: -o-linear-gradient(#2395fa 0%, #3fb0fc 100%);
+		background: linear-gradient(#2395fa 0%, #3fb0fc 100%);
+		-webkit-box-shadow: inset 0 3px 10px rgba(0,0,0,0.2), 1px 1px 4px rgba(0,0,0,0.4);
+		box-shadow: inset 0 3px 10px rgba(0,0,0,0.2), 1px 1px 4px rgba(0,0,0,0.4);
+	}
+
+
+
+	/* **********************
+	 *  チェックボックス
+	 * **********************/
+
+	/* チェックボックスのベース部分 */
+	.almight-checkbox {
+		position: absolute;
+		width: 50px;
+		height: 25px;
+		background-color: #e9e9e9;
+		border-radius: 20px;
+		box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+		-webkit-transform-style: preserve-3d; /* iOSでスクロールした時に表示されない対策 */
+	}
+
+	/* チェックボックスハンドル */
+	.almight-checkbox div {
+		position: absolute;
+		top: -3px;
+		left: -3px;
+		width: 30px;
+		height: 30px;
+		background-size: 30px 30px;
+		background-repeat: no-repeat;
+		-webkit-transition: -webkit-transform 300ms;
+		-moz-transition: -moz-transform 300ms;
+		-ms-transition: -ms-transform 300ms;
+		transition: transform 300ms;
+	}
+
+	/* チェックボックス・ON */
+	.almight-checkbox div.on {
+		background-image: url(plugin/blue-ui/checkbox_on.png);
+		-webkit-transform: translate(25px, 0);
+		-moz-transform: translate(25px, 0);
+		-ms-transform: translate(25px, 0);
+		transform: translate(25px, 0);
+	}
+
+	/* チェックボックス・OFF */
+	.almight-checkbox div.off {
+		background-image: url(plugin/blue-ui/checkbox_off.png);
+		-webkit-transform: translate(0, 0);
+		-moz-transform: translate(0, 0);
+		-ms-transform: translate(0, 0);
+		transform: translate(0, 0);
+	}
+
+	/* チェックボックス・Disable */
+	.almight-checkbox div.disable {
+		background-image: url(plugin/blue-ui/checkbox_disable.png);
+		-webkit-transform: translate(0, 0);
+		-moz-transform: translate(0, 0);
+		-ms-transform: translate(0, 0);
+		transform: translate(0, 0);
+	}
+
+	/* **********************
+	 *  スライダー
+	 * **********************/
+
+	/* スライダーのベース部分 */
+	.almight-slider {
+		position: relative;
+		top: -5px;
+		left: -5px;
+		width: 95%;
+		height: 13px;
+		margin: 8px 15px;
+		padding-top: 6px;
+		background-color: #e9e9e9;
+		border-radius: 10px;
+		box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+	}
+
+	/* スライダーのベース部分 2段目 */
+	.almight-slider div.base {
+		margin: 0 10px;
+		height: 7px;
+		width: auto;
+		background-color: #d1d1d1;
+		border-radius: 10px;		box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+	}
+
+	/* 青いバー */
+	.almight-slider div.base div.normal {
+		width: 0;
+		height: 5px;
+		background: #42A5FF;
+		background: -webkit-gradient(linear, left top, left bottom, from(#43b3fc), to(#2091f9));
+		background: -webkit-linear-gradient(#43b3fc 0%, #2091f9 100%);
+		background: -moz-linear-gradient(#43b3fc 0%, #2091f9 100%);
+		background: -ms-linear-gradient(#43b3fc 0%, #2091f9 100%);
+		background: -o-linear-gradient(#43b3fc 0%, #2091f9 100%);
+		background: linear-gradient(#43b3fc 0%, #2091f9 100%);
+		border: 1px solid #3381cb;
+		border-radius: 4px;
+	}
+
+	/* 操作中の青いバー */
+	.almight-slider div.base div.slash {
+		width: 0;
+		height: 7px;
+		background-size: 31px 7px;
+		background-repeat: repeat;
+		background-image: url(plugin/blue-ui/slider_over.png);
+		border-radius: 4px;
+		/* NOTE: 操作中にバーをアニメーションさせることができるが、
+		   再描画が多くなりすぎてモバイル環境でFPSが落ちるためfixしたらコメントをはずす */
+		/*-webkit-animation: slider_slash 2500ms linear infinite;
+		-moz-animation: slider_slash 2500ms linear infinite;
+		-ms-animation: slider_slash 2500ms linear infinite;
+		-o-animation: slider_slash 2500ms linear infinite;
+		animation: slider_slash 2500ms linear infinite;*/
+	}
+
+	@-webkit-keyframes slider_slash {
+		0% { background-position: 0 0; }
+		99% { background-position: 31px 0; }
+		100% { background-position: 0 0 ; }
+	}
+
+	@-moz-keyframes slider_slash {
+		0% { background-position: 0 0; }
+		99% { background-position: 31px 0; }
+		100% { background-position: 0 0 ; }
+	}
+
+	@-ms-keyframes slider_slash {
+		0% { background-position: 0 0; }
+		99% { background-position: 31px 0; }
+		100% { background-position: 0 0 ; }
+	}
+
+	@-o-keyframes slider_slash {
+		0% { background-position: 0 0; }
+		99% { background-position: 31px 0; }
+		100% { background-position: 0 0 ; }
+	}
+
+	@keyframes slider_slash {
+		0% { background-position: 0 0; }
+		99% { background-position: 31px 0; }
+		100% { background-position: 0 0 ; }
+	}
+
+	/* 操作可能状態のスライダーハンドル */
+	.almight-slider div.on {
+		position: absolute;
+		top: -15px;
+		left: -13px;
+		width: 30px;
+		height: 30px;
+		padding: 10px;
+		background-position: 10px 10px;
+		background-size: 30px 30px;
+		background-repeat: no-repeat;
+		background-image: url(plugin/blue-ui/slider_active.png);
+		cursor: pointer;
+	}
+
+	/* disable状態のスライダーハンドル */
+	.almight-slider div.disable {
+		position: absolute;
+		top: -5px;
+		left: -3px;
+		width: 30px;
+		height: 30px;
+		background-size: 30px 30px;
+		background-repeat: no-repeat;
+		background-image: url(plugin/blue-ui/slider_disable.png);
+		cursor: pointer;
+	}
+
+	/* スライダー操作中に値が表示されるポップアップ */
+	.almight-slider div.over {
+		display: none;
+		position: absolute;
+		top: -60px;
+		left: -27px;
+		width: 75px;
+		height: 50px;
+		background-image: url(plugin/blue-ui/slider_popover.png);
+		background-repeat: no-repeat;
+		background-size: 75px 50px;
+		cursor: pointer;
+	}
+
+	/* スライダーポップアップの文字 */
+	.almight-slider div.over span {
+		display: block;
+		width: 100%;
+		height: 30px;
+		color: #fff;
+		font-size: 20px;
+		line-height: 36px;
+		text-align: center;
+		text-shadow: 0 -1px 0 rgba(0,0,0,0.3);
+	}
+
+	/* スライダー音量アイコン */
+	.almight-slider.icon-sound:before {
+		display: block;
+		position: absolute;
+		top: -6px;
+		left: -28px;
+		width: 30px;
+		height: 30px;
+		background-image: url(plugin/blue-ui/vol_min.png);
+		background-repeat: no-repeat;
+		background-size: 30px 30px;
+		content: '';
+	}
+
+	.almight-slider.icon-sound:after {
+		display: block;
+		position: absolute;
+		top: -6px;
+		right: -32px;
+		width: 30px;
+		height: 30px;
+		background-image: url(plugin/blue-ui/vol_max.png);
+		background-repeat: no-repeat;
+		background-size: 30px 30px;
+		content: '';
+	}
+
+	/* スライダーメッセージアイコン */
+	.almight-slider.icon-message:before {
+		display: block;
+		position: absolute;
+		top: -6px;
+		left: -28px;
+		width: 30px;
+		height: 30px;
+		background-image: url(plugin/blue-ui/fast_message.png);
+		background-repeat: no-repeat;
+		background-size: 30px 30px;
+		content: '';
+	}
+
+	.almight-slider.icon-message:after {
+		display: block;
+		position: absolute;
+		top: -6px;
+		right: -32px;
+		width: 30px;
+		height: 30px;
+		background-image: url(plugin/blue-ui/slow_message.png);
+		background-repeat: no-repeat;
+		background-size: 30px 30px;
+		content: '';
+	}
+
+	</style>
+
+<!--
+	******** ゲームに読み込まれるJavaScript ********
+-->
+	<script type="text/javascript" data-append="yes">
+$(function(){
+	almight.UI = {
+		/**
+		* **ダイアログボックスを表示する**
+		*
+		* ダイアログを表示します
+		*
+		* @method dialog
+		* @params {Object} [option] オプション
+		* @params {String} [option.text] ダイアログに表示するテキスト
+		* @params {Array} [option.button] ボタンオプション
+		* @params {String} [option.button.text] ボタンに表示するテキスト
+		* @params {String} [option.button.type] ボタンのスタイル（cssのクラスにあたります。doneなど）
+		* @params {Function} [option.button.callback] ボタンが選択されたときのコールバック関数
+		*/
+		dialog: function(option){
+			// 既に表示されている場合は実行しない
+			if($('#almight-dialog-window').size() !== 0) return false;
+
+			// オプションを設定
+			option = $.extend({
+				text: '',
+				button: [{
+					text: 'OK',
+					type: '',
+					callback: null
+				}]
+			}, option);
+
+			// ダイアログウィンドウを追加
+			$('body').append('<div id="almight-dialog-window"><div class="box"></div></div>');
+
+			// ダイアログを生成
+			var dialog = '<div class="almight-dialog">';
+			dialog += '<div class="almight-dialog-text">'+ option.text +'</div>';
+
+			dialog += '<div class="almight-dialog-buttonbox">';
+
+			// ボタンを生成
+			for(var i=0;i<option.button.length;i++) {
+				dialog += '<div class="ui-button '+ option.button[i].type +'"><span>'+ option.button[i].text +'</span></div>';
+			}
+
+			dialog += '</div></div>';
+
+			// ダイアログウィンドウにダイアログを追加
+			$('#almight-dialog-window .box').append(dialog);
+
+			// ボタンにコールバックを設定
+			$('#almight-dialog-window .ui-button').each(function(i){
+				if(typeof option.button[i].callback === 'function') {
+					$.data(this, 'callback', option.button[i].callback);
+				}
+			});
+
+			// ボタンがクリックされた時のイベントをバインド
+			$('#almight-dialog-window .ui-button').on('vclick', function(){
+				var callback = $.data(this, 'callback');
+				$('#almight-dialog-window').fadeOut(200, function(){
+					almight.stage.disableSidebar = almight.stage.pauseGame_;
+					almight.stage.pauseGame = almight.stage.pauseGame_;
+					$(this).remove();
+
+					// コールバック関数を実行
+					if(typeof callback === 'function') callback.apply();
+				});
+
+				return false;
+			});
+
+			$('#almight-dialog-window').transition({
+				opacity: 1,
+				duration: 100,
+				complete: function(){
+					$('#almight-dialog-window').css('display', 'table').find('.almight-dialog').transition({
+						opacity: 1,
+						duration: 200
+					});
+				}
+			});
+		}
+	};
+
+
+	/**
+	 * チェックボックスUI (jQuery method)
+	 */
+	(function($) {
+		var methods = {
+			initialize: function(options) {
+				return this.each(function(){
+					if(this.tagName.toLowerCase() !== 'input') return true;
+
+					var self = this;
+
+					var checkbox = $('<div class="almight-checkbox" />');
+					checkbox.append('<div class="off"></div>');
+
+					$(this).on('change', function(e) {
+						// チェック値を描画する
+						if($(this).is(':checked')) {
+							$(checkbox).find('div').attr('class', 'on');
+						} else {
+							$(checkbox).find('div').attr('class', 'off');
+						}
+
+					}).after(checkbox).hide();
+
+					checkbox.on('tap', function(){
+						if($(self).is(':checked')) {
+							$(self).prop('checked', false).triggerHandler('change');
+						} else {
+							$(self).prop('checked', true).triggerHandler('change');
+						}
+
+						return false;
+					});
+				});
+			}
+		};
+
+		$.fn.almightCheckbox = function(method) {
+			if(methods[method]) {
+				return methods[method].apply(this, Array.prototype.slice.call( arguments, 1 ));
+			} else if (typeof method === 'object' || !method) {
+				return methods.initialize.apply(this, arguments);
+			} else {
+				$.error('Method ' + method + ' does not exist');
+			}
+		};
+
+		// 画像をプリロード
+		var preload = [
+			'plugin/blue-ui/checkbox_off.png',
+			'plugin/blue-ui/checkbox_on.png',
+			'plugin/blue-ui/checkbox_disable.png'
+		];
+		for(var i=0;i<preload.length;i++) {
+			$('<img/>').attr('src', preload[i]);
+		}
+	})(jQuery);
+
+
+	/**
+	 * スライダーUI (jQuery method)
+	 */
+	(function($) {
+		var methods = {
+			initialize: function(option) {
+				return this.each(function(){
+					if(this.tagName.toLowerCase() !== 'input') return true;
+
+					options = $.extend({}, {
+						max: 100,
+						min: 0,
+						value: 0,
+						unit: '',
+						popup: true,
+						enable: true
+					}, option);
+
+					options.dom = this;
+
+					// スライダー要素を追加
+					var slider = $('<div class="almight-slider" data-value="0" />');
+					slider.append('<div class="base"><div class="normal"></div></div><div class="handle on"></div><div class="over"><span>0%</span></div>');
+					$(this).hide().after(slider);
+
+					// オプションを更新
+					if($(this).attr('max') !== undefined) options.max = Number($(this).attr('max'));
+					if($(this).attr('min') !== undefined) options.min = Number($(this).attr('min'));
+					if($(this).attr('data-unit') !== undefined) options.unit = $(this).attr('data-unit');
+					if($(this).attr('data-icon') !== undefined) slider.addClass('icon-' + $(this).attr('data-icon'));
+					if($(this).attr('data-popup') === 'false') options.popup = false;
+
+					// スライダー要素のイベント
+					slider.find('.handle').on('vmousedown', methods.sliderDown);
+
+					// スライダーのchangeイベントを監視
+					$(this).on({
+						change: function() {
+							/*
+							slider.find('.handle, .over').css('transition', 'all 200ms');
+							slider.find('.base div').css('transition', 'all 200ms');
+
+							setTimeout(function() {
+								slider.find('.handle, .over').css('transition', '');
+
+								slider.find('.base div').css('transition', '');
+							}, 300);
+							*/
+
+							var value = (Number($(this).val()) - options.min) / (options.max - options.min);
+							var width = (slider.width() - 20) * value;
+							slider.attr('data-value', value);
+							slider.find('.handle, .over').css('x', width);
+							slider.find('.base div').width(width);
+							slider.find('.over span').text(parseInt(value * $.data(this, 'max'), 10) + $.data(this, 'unit'));
+							$(this).trigger('slide');
+						}
+					});
+
+					// オプションを設定
+					$.data(slider[0], options);
+				});
+			},
+
+			sliderDown: function(e) {
+				var option = $.data($(this).parent()[0]);
+
+				// タッチ開始したときの座標や状態を取得
+				option.pageX = (event.changedTouches !== undefined ? event.changedTouches[0].pageX : e.pageX) - 5; // X軸
+				option.movePageX = null;
+				option.sliderWidth = $(this).parent().width() - 20; // スライダーの全体幅
+				option.sliderVal = parseFloat($(this).parent().attr('data-value')); // 現在の値
+				option.disableHandle = $(this).hasClass('disable'); // disableハンドルかどうか
+				option.activeSlider = $(this).parent(); // 現在アクティブなスライダー
+				var viewvalue = ~~(option.sliderVal * (option.max - option.min) + option.min);
+				option.activeSlider.find('.over span').text(viewvalue + option.unit);
+
+				// 操作中アニメーション
+				$(this).parent().find('.base div').attr('class', 'slash');
+				if(option.popup) $(this).parent().find('.over').show();
+
+				// イベントをバインド
+				$(document).on({
+					vmousemove: methods.sliderMove,
+					vmouseup: methods.sliderEnd
+
+				}).data('almight-slider', option);
+			},
+
+			sliderMove: function(e) {
+				e.preventDefault();
+				var option = $(document).data('almight-slider');
+
+				// 距離を計算
+				option.movePageX = (false ? event.changedTouches[0].pageX : e.pageX);
+				var moveX = option.movePageX - option.pageX;
+				var width = moveX + (option.sliderVal * option.sliderWidth);
+				var value = Math.round((width/option.sliderWidth) * 100) / 100;
+
+				if(value >= 1) {
+					value = 1;
+					width = option.sliderWidth;
+				} else if(value <= 0) {
+					value = 0;
+					width = 0;
+				}
+
+				var viewvalue = ~~(value * (option.max - option.min) + option.min);
+
+				// 各種要素を変更
+				option.activeSlider.find('.handle, .over').css('x', width);
+				option.activeSlider.find('.base div').width(width);
+				option.activeSlider.find('.over span').text(viewvalue + option.unit);
+				option.activeSlider.attr('data-value', value);
+				$(option.dom).val(viewvalue).trigger('slide');
+			},
+
+			sliderEnd: function() {
+				var option = $(document).data('almight-slider');
+
+				$(document).off({
+					vmousemove: methods.sliderMove,
+					vmouseup: methods.sliderEnd
+				});
+
+				option.activeSlider.find('.base div').attr('class', 'normal');
+				option.activeSlider.find('.over').hide();
+			}
+		};
+
+		$.fn.almightSlider = function(method) {
+			if(methods[method]) {
+				return methods[method].apply(this, Array.prototype.slice.call( arguments, 1 ));
+			} else if (typeof method === 'object' || !method) {
+				return methods.initialize.apply(this, arguments);
+			} else {
+				$.error('Method ' + method + ' does not exist');
+			}
+		};
+
+		// 画像をプリロード
+		var preload = [
+			'plugin/blue-ui/slider_disable.png',
+			'plugin/blue-ui/slider_over.png',
+			'plugin/blue-ui/slider_over.png',
+			'plugin/blue-ui/slider_active.png',
+			'plugin/blue-ui/slider_disable.png',
+			'plugin/blue-ui/slider_popover.png',
+			'plugin/blue-ui/vol_min.png',
+			'plugin/blue-ui/vol_max.png',
+			'plugin/blue-ui/fast_message.png',
+			'plugin/blue-ui/slow_message.png'
+		];
+		for(var i=0;i<preload.length;i++) {
+			$('<img/>').attr('src', preload[i]);
+		}
+	})(jQuery);
+});
+	</script>
+</head>
+<body>
+
+<!--
+	******** ゲームに読み込まれるHTML ********
+-->
+
+</body>
+</html>

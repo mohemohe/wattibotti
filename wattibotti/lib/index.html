@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge;chrome=1">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<title>AlmightJS</title>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/almight.style.css">
+	<!--[if lt IE 9]> <script src="js/jquery-1.9.1.min.js"></script> <![endif]-->
+	<!--[if gte IE 9]><!--> <script src="js/jquery-2.0.0.min.js"></script> <!--<![endif]-->
+	<script type="text/javascript" src="dest/almight.lib.js"></script>
+	<script type="text/javascript" src="dest/almight.js"></script>
+	<script type="text/javascript" src="config/almight.config.js"></script>
+	<script type="text/javascript">
+	/**
+	 * AlmightJSを初期化して、ゲームを開始します。
+	 */
+	$(function(){
+		// Almightを初期化
+		almight = new Almight.Core(almight);
+
+		almight.init.done(function(){
+			// first.ksをロード
+			almight.script.load(Almight.Util.getPath('first.ks')).then(
+			// ロード成功
+			function() {
+				almight.script.dequeue(); // シナリオを実行開始
+
+			}, function(xhr, status) {
+				Almight.Global.error('初回シナリオがロードできませんでした: ' + status);
+			});
+
+		}).fail(function(status){
+			Almight.Global.error('Almightの初期化に失敗しました:' + status);
+		});
+	});
+	</script>
+</head>
+<body>
+	<div id="almight-container"></div>
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<!--
+	Title: Almightロード画面 プラグイン
+	Author: EISYS, Inc. <http://almight.jp>
+	Licence: MIT License
+-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<base href="../"></base>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<script src="dest/almight.lib.js"></script>
+<!--
+	******** ゲームに読み込まれるCSS ********
+-->
+	<style type="text/css" data-append="yes">
+	#almight-title-window {
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		display: none;
+		opacity: 0;
+		z-index: 5000;
+	}
+
+	#almight-title-window .menu_list {
+		/* 位置固定用*/
+		/*
+		position: absolute; 
+		top: 5em;
+		left: 5em;
+		*/
+		margin: 510px auto 0 auto; /* ボタン位置調整 */
+		width: 20em; /* ボタンの横幅 */
+	}
+
+	#almight-title-window .menu_list ul li {
+		display: block;
+		color: #575759; /* テキスト色 */
+		font-size: 1.4em; /* フォントサイズ */
+		line-height: 2.35em; /* ボタンの高さ */
+		margin: 0.8em 0.3em; /* ボタンの間隔（縦 横） */
+		border: 2px solid #ddd; /* ボタンの枠線 */
+		font-weight: bold;
+		text-shadow: 1px 1px 1px rgba(255,255,255,0.7);
+		border-radius: 5px;
+		text-align: center;
+		background: rgb(255,255,255);
+		background: -moz-linear-gradient(top,  rgba(255,255,255,1) 0%, rgba(229,229,229,1) 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,1)), color-stop(100%,rgba(229,229,229,1)));
+		background: -webkit-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%);
+		background: -o-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%);
+		background: -ms-linear-gradient(top,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%);
+		background: linear-gradient(to bottom,  rgba(255,255,255,1) 0%,rgba(229,229,229,1) 100%);
+		-webkit-box-shadow: 1px 1px 4px rgba(0,0,0,0.37);
+		box-shadow: 1px 1px 4px rgba(0,0,0,0.37);
+		cursor: pointer;
+	}
+
+	#almight-title-window .menu_list ul li:active {
+		background: rgb(229,229,229);
+		background: -moz-linear-gradient(top,  rgba(229,229,229,1) 0%, rgba(255,255,255,1) 100%);
+		background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(229,229,229,1)), color-stop(100%,rgba(255,255,255,1)));
+		background: -webkit-linear-gradient(top,  rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%);
+		background: -o-linear-gradient(top,  rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%);
+		background: -ms-linear-gradient(top,  rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%);
+		background: linear-gradient(to bottom,  rgba(229,229,229,1) 0%,rgba(255,255,255,1) 100%);
+	}
+	</style>
+
+	<style type="text/css">
+	/* title.htmlを開いて確認する用 */
+	body {
+		background-color: #333;
+		
+	}
+	#almight-title-window {
+		display: block;
+		opacity: 1;
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるJavaScript ********
+-->
+	<script type="text/javascript" data-append="yes">
+$(function(){
+	var storage = 'first.ks';
+	var target = '*newgame';
+
+	// はじめから を押した時
+	$('#almight-title-start').on('tap', function(){
+		almight.script.command('@jump storage="'+storage+'" target="'+target+'"');
+		return false;
+	});
+
+	// つづきから を押した時
+	$('#almight-title-load').on('tap', function(){
+		$(Almight).triggerHandler('showLoadWindow');
+		return false;
+	});
+
+	// メニュー を押した時
+	$('#almight-title-menu').on('tap', function(){
+		$(Almight).triggerHandler('toggleSidebar');
+		return false;
+	});
+
+
+	/**
+	 * タグの拡張
+	 */
+	$.extend(almight.tag, {
+		'showtitle': function(params){
+			var time = (typeof params.time === 'number' ? params.time : 1000);
+			if(params.storage !== undefined) storage = params.storage;
+			if(params.target !== undefined) target = params.target;
+
+			$('#almight-title-window').css('display', 'block').transition({
+				duration: time,
+				opacity: 1
+			});
+
+			if(params.autohide) {
+				setTimeout(function(){
+					// シナリオが進んだらウィンドウを消す
+					$(Almight).one('exec', function(){
+						almight.tag.hidetitle({ time: 1000 });
+					});
+				}, 0);
+			}
+
+			return 1;
+		},
+		
+		'hidetitle': function(params){
+			var time = (typeof params.time === 'number' ? params.time : 1000);
+
+			$('#almight-title-window').transition({
+				duration: time,
+				opacity: 0,
+				complete: function(){
+					$('#almight-title-window').hide();
+				}
+			});
+
+			return 1;
+		}
+	});
+});
+	</script>
+</head>
+<body>
+
+<!--
+	******** ゲームに読み込まれるHTML ********
+-->
+
+<div id="almight-title-window" data-append="yes" data-selector="#almight-container-stage">
+	<div class="menu_list">
+		<ul>
+			<li id="almight-title-start">はじめから</li>
+			<li id="almight-title-load">つづきから</li>
+			<li id="almight-title-menu">メニュー</li>
+		</ul>
+	</div>
+</div>
+
+</body>
+</html>

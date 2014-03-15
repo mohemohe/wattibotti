@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<!--
+	Title: AlmightCGモード プラグイン
+	Author: EISYS, Inc. <http://almight.jp>
+	Licence: MIT License
+-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<base href="../"></base>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<script src="dest/almight.lib.js"></script>
+<!--
+	******** ゲームに読み込まれるCSS ********
+-->
+	<style type="text/css" data-append="yes">
+	#almight-cgmode-window {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		background-color: rgba(0,0,0,0.7);
+		z-index: 1000;
+		opacity: 0;
+		display: none;
+	}
+
+	#almight-cgmode-box {
+		text-align: center;
+		padding: 20px 0;
+	}
+
+	/* CGサムネイルのデザインはここ */
+	#almight-cgmode-window .almight-cgslot {
+		display: inline-block;
+		background-color: #fff;
+		margin: 3px;
+		padding: 5px 5px 1px 5px;
+		border-radius: 3px;
+		-webkit-box-shadow: inset 0px -2px 4px rgba(0,0,0,0.6);
+		box-shadow: inset 0px -2px 4px rgba(0,0,0,0.6);
+		-webkit-transform-style: preserve-3d;
+	}
+
+	#almight-cgmode-window .thumb {
+		width: 130px;
+		height: 95px;
+		margin-bottom: 5px;
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: 0;
+		-webkit-box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+		box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+		cursor: pointer;
+	}
+
+
+	#almight-cgmode-window .close-thumb {
+		position: relative;
+		width: 130px;
+		height: 95px;
+		margin-bottom: 5px;
+		background-image: url(plugin/saveload/nodata.png);
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: 0;
+		box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+	}
+
+	#almight-cgmode-window .close-thumb span {
+		position: absolute;
+		right: 7px;
+		bottom: 3px;
+		font-size: 35px;
+		color: #aaaaaa;
+		text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.8);
+		font-family: futura, helvetica, arial, sans-serif;
+	}
+
+
+
+	@media screen and (min-width: 630px) {
+		#almight-cgmode-window .almight-cgslot {
+			margin: 10px 1.5%;
+			padding: 8px 8px 4px 8px;
+		}
+
+		#almight-cgmode-window .thumb {
+			width: 190px;
+			height: 140px;
+		}
+		
+		#almight-cgmode-window .close-thumb {
+			width: 190px;
+			height: 140px;
+		}
+		
+		#almight-cgmode-window .close-thumb span {
+			right: 15px;
+			bottom: 7px;
+			font-size: 50px;
+		}
+	}
+
+
+	#almight-cgfull {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 43000;
+		background-color: rgba(0,0,0,.95);
+		background-size: 64px 64px;
+		background-position: center center;
+		background-repeat: no-repeat;
+		display: none;
+		opacity: 0;
+	}
+
+	#almight-cgfull .box {
+		width: 100%;
+		height: 100%;
+		display: none;
+		background-size: contain;
+		background-position: center center;
+		background-repeat: no-repeat;
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるJavaScript ********
+-->
+	<script type="text/javascript" data-append="yes">
+$(function(){
+	var thumb_tmp = $('#almight-cgmode-thumb-template').html();
+	var nodata_tmp = $('#almight-cgmode-nodata-template').html();
+	
+	/**
+	 * CG設定
+	 *
+	 * expの部分には、変数名を入力します。変数に0や値が入っていない場合はCGフラグがオフとなります。
+	 * imgの部分には、表示したいCGのファイル名を入力します。
+	 */
+	var cgdata = [
+		// 1枚目
+		[
+		{ exp:'sf.ev001a', img:'ev001a.jpg' },
+		{ exp:'sf.ev001b', img:'ev001b.jpg' },
+		{ exp:'sf.ev001c', img:'ev001c.jpg' }
+		],
+		// 2枚目
+		[
+		{ exp:'sf.ev002a', img:'ev002a.jpg' }
+		],
+		// 3枚目
+		[
+		{ exp:'sf.ev003a', img:'ev003a.jpg' },
+		{ exp:'sf.ev003b', img:'ev003b.jpg' }
+		
+		],
+		// 4枚目
+		[
+		{ exp:'sf.ev004a', img:'ev004a.jpg' },
+		{ exp:'sf.ev004b', img:'ev004b.jpg' }
+		],
+		// 5枚目
+		[
+		{ exp:'sf.ev005a', img:'ev005a.jpg' },
+		{ exp:'sf.ev005b', img:'ev005b.jpg' }
+		]
+	];
+
+	/**
+	 * セーブ画面の表示・非表示
+	 */
+	$(Almight).on({
+		showCgmodeWindow: function() {
+			var dom = '';
+
+			for(var i=0;i<cgdata.length;i++) {
+				html = '';
+
+				if(eval(cgdata[i][0].exp)) {
+					html = thumb_tmp;
+					html = html.replace(/\{\{i\}\}/g, i);
+					var path = cgdata[i][0].thumb || cgdata[i][0].img;
+					path = Almight.Util.getPath(path);
+					html = html.replace(/\{\{path\}\}/g, path);
+					dom += html;
+				} else {
+					html = nodata_tmp;
+					html = html.replace(/\{\{i\}\}/g, i+1);
+					dom += html;
+				}
+			}
+
+			$('#almight-cgmode-box').empty().html(dom);
+
+			// クリックした時のイベントを設定
+			$('#almight-cgmode-box .thumb').on('tap', function() {
+				$('#almight-container').append('<div id="almight-cgfull"><div class="box"></div></div>');
+
+				$('#almight-cgfull').data({
+					'name': Number($(this).attr('data-name')),
+					'count': 0
+				}).on('tap', function(){
+					var i = $(this).data('name');
+					var count = $(this).data('count');
+					
+					if(cgdata[i].length > count && eval(cgdata[i][count].exp)) {
+						var path = Almight.Util.getPath(cgdata[i][count].img);
+						$(this).find('.box').css('background-image', 'url('+ path + ')').show();
+						count++;
+						$(this).data('count', count);
+						// 次プリロード
+						if(cgdata[i][count] !== undefined) {
+							$('<img/>').attr('src', Almight.Util.getPath(cgdata[i][count].img));
+						}
+					} else {
+						$('#almight-cgfull').transition({
+							opacity: 0,
+							duration: 200,
+							complete: function(){
+								$('#almight-cgfull').remove();
+							}
+						});
+					}
+				}).triggerHandler('tap');
+				
+				$('#almight-cgfull').css('display', 'block').transition({
+					opacity: 1,
+					duration: 200
+				});
+
+				return false;
+			});
+
+			setTimeout(function(){
+				$('#almight-cgmode-window').css('display', 'block').transition({
+					opacity: 1,
+					duration: 200
+				});
+			}, 0);
+		},
+
+		hideCgmodeWindow: function() {
+			$('#almight-cgmode-window').transition({
+				opacity: 0,
+				duration: 200,
+				complete: function(){
+					$('#almight-cgmode-window').hide();
+				}
+			});
+		}
+	});
+
+	/**
+	 * 戻るボタンを押した時の動作
+	 */
+	$('#almight-cgmode-window .back-button').on('tap', function(){
+		$(Almight).triggerHandler('hideCgmodeWindow');
+		return false;
+	});
+
+	$('#almight-cgmode-window').on({
+		// 右クリックで閉じる
+		contextmenu: function(){
+			$(Almight).triggerHandler('hideCgmodeWindow');
+			return false;
+		}
+	});
+
+	/**
+	 * タグの拡張
+	 */
+	$.extend(almight.tag, {
+		'showcgmodewindow': function(){
+			$(Almight).triggerHandler('showCgmodeWindow');
+			return 1;
+		},
+
+		'hidecgmodewindow': function(){
+			$(Almight).triggerHandler('hideCgmodeWindow');
+			return 1;
+		}
+	});
+});
+	</script>
+</head>
+<body>
+
+<!--
+	******** ゲームに読み込まれるHTML ********
+-->
+<div id="almight-cgmode-window" class="almight-window" data-append="yes" data-selector="#almight-container">
+
+	<!-- ナビゲーションバー -->
+	<div class="almight-navbar">
+		<div class="back-button">ゲームに戻る</div>
+		<span>CGモード</span>
+	</div>
+
+	<!-- テンプレート  -->
+	<script type="text/template" id="almight-cgmode-thumb-template">
+		<div data-slot="{{i}}" class="almight-cgslot">
+			<div class="thumb" data-name="{{i}}" style="background-image: url({{path}});"></div>
+		</div>
+	</script>
+
+	<script type="text/template" id="almight-cgmode-nodata-template">
+		<div data-slot="{{i}}" class="almight-cgslot">
+			<div class="close-thumb"><span>{{i}}</span></div>
+		</div>
+	</script>
+
+	<div id="almight-cgmode-box"></div>
+</div>
+
+</body>
+</html>

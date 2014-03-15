@@ -1,0 +1,320 @@
+@charset "utf-8";
+/*
+	Almight.js
+	almight.style.scss
+
+	Copyright 2012 EISYS, Inc.
+*/
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  cursor: default;
+  background-image: url(bg.png);
+  background-size: 320px 320px;
+  background-repeat: repeat;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-font-smoothing: subpixel-antialiased;
+  font-family: "Hiragino Kaku Gothic ProN", Meiryo, sans-serif; }
+
+a {
+  color: white;
+  text-decoration: none;
+  cursor: default; }
+
+/**
+ * ステージを入れるコンテナ。全ての親になる
+ */
+#almight-container {
+  position: absolute;
+  background-color: #000000;
+  /*box-shadow: 0 0 25px rgba(0, 0, 0, .8);*/
+  overflow: hidden; }
+
+/**
+ * バックステージ
+ */
+.almight-back-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  cursor: default;
+  z-index: 1; }
+
+/**
+ * ゲームステージ
+ */
+.almight-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  cursor: default;
+  z-index: 2;
+  background-color: #000; }
+
+/**
+ * トランジションステージ
+ */
+.almight-trans-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  display: none;
+  z-index: 3;
+  background-color: #000; }
+
+.almight-trans-stage canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2; }
+
+/**
+ * レイヤー
+ */
+.almight-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: 1; }
+  .almight-layer:after {
+    content: "";
+    display: block;
+    clear: both; }
+
+/**
+ * メッセージレイヤー
+ */
+.almight-message-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  z-index: 100; }
+  .almight-message-layer:after {
+    content: "";
+    display: block;
+    clear: both; }
+
+/**
+ * レイヤー内 画像
+ */
+.almight-layer-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none; }
+
+/**
+ * メッセージレイヤー 背景
+ */
+.almight-layer-msgbg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-repeat: no-repeat;
+  background-size: 100;
+  -webkit-user-drag: none;
+  -moz-user-drag: none;
+  -ms-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  z-index: 1; }
+
+/**
+ * メッセージレイヤー メッセージ
+ */
+.almight-layer-message {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  -webkit-overflow-scrolling: touch;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  z-index: 2; }
+
+/**
+ * メッセージレイヤー 文字
+ */
+.almight-layer-message span {
+  display: inline-block;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  -ms-backface-visibility: hidden;
+  -o-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-perspective: 1000;
+  -moz-perspective: 1000;
+  -o-perspective: 1000;
+  perspective: 1000; }
+
+/**
+ * メッセージレイヤー中の画像
+ */
+.almight-graph {
+  display: inline-block; }
+
+/**
+ * buttonタグ
+ */
+.almight-button {
+  position: absolute;
+  left: 0;
+  top: 0;
+  cursor: pointer;
+  z-index: 5000; }
+
+a.almight-link {
+  cursor: pointer; }
+
+/**
+ * choicesタグ
+ */
+#almight-choices-window {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 19000;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none; }
+  #almight-choices-window .almight-choices-box {
+    display: table-cell;
+    vertical-align: middle; }
+
+.ui-choices {
+  width: 80%;
+  height: 1.5em;
+  margin: 2.5em auto;
+  color: #000;
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 1.5em;
+  cursor: pointer;
+  border: 4px solid white;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 8px rgba(0, 0, 0, 0.7); }
+
+.ui-choices:hover {
+  background: #eee; }
+
+.ui-choices:active {
+  background: #fff; }
+
+/**
+ * クリック待ち記号
+ */
+.almight-break-page {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 3px;
+  border-left: 10px solid #93dcf4;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  -webkit-animation: blink 1500ms infinite;
+  -moz-animation: blink 1500ms infinite;
+  animation: blink 1500ms infinite; }
+
+.almight-break-line {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 3px;
+  border-top: 10px solid #a2e952;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  -webkit-animation: blink 1500ms infinite;
+  -moz-animation: blink 1500ms infinite;
+  animation: blink 1500ms infinite; }
+
+@-webkit-keyframes blink {
+  0%, 100% {
+    opacity: 0; }
+
+  66% {
+    opacity: 0.8; } }
+
+@-moz-keyframes blink {
+  0%, 100% {
+    opacity: 0; }
+
+  66% {
+    opacity: 0.8; } }
+
+@-ms-keyframes blink {
+  0%, 100% {
+    opacity: 0; }
+
+  66% {
+    opacity: 0.8; } }
+
+@-o-keyframes blink {
+  0%, 100% {
+    opacity: 0; }
+
+  66% {
+    opacity: 0.8; } }
+
+@keyframes blink {
+  0%, 100% {
+    opacity: 0; }
+
+  66% {
+    opacity: 0.8; } }
+
+/**
+ * エラーが発生した時に表示されるボックス
+ */
+.almight-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #e6e6e6;
+  background: -webkit-radial-gradient(50% 50%, ellipse cover, white, #bdbdbd);
+  background: -moz-radial-gradient(50% 50%, ellipse cover, white, #bdbdbd);
+  background: -ms-radial-gradient(50% 50%, ellipse cover, white, #bdbdbd);
+  background: -o-radial-gradient(50% 50%, ellipse cover, white, #bdbdbd);
+  background: radial-gradient(50% 50%, ellipse cover, white, #bdbdbd);
+  text-align: center;
+  font-size: 1.25em;
+  color: #d82e79;
+  z-index: 10000; }
+  .almight-error span {
+    position: absolute;
+    display: block;
+    top: 48%;
+    text-align: center;
+    width: 100%; }
+  .almight-error a {
+    font-size: 14px;
+    color: #999999; }

@@ -1,0 +1,48 @@
+Software License Agreement
+
+
+This Software License Agreement (herein referred to as "this Agreement") shall define the terms and conditions under which a User can use the Software (defined in the Article 1) that is developed by EISYS, Inc. (herein referred to as "Eisys"). 
+Eisys permits a User to use the Software only in accordance with the terms and conditions of this Agreement. 
+
+Article 1 Definition
+"Almight.js" (herein referred to as "the Software") in this Agreement means the game engine library developed by Eisys.
+"User" in this Agreement means a person who uses the Software, in whole or in part, for personal, business or other uses.
+"Product" in this Agreement means any data or contents created using the Software.
+
+Article 2 Licensing
+1. Eisys may authorize a User (i) to use or copy the Software for non-profit-making purposes and (ii) to distribute the copy of the Software to a third person with no compensation.
+2. Unless Eisys has preliminarily given written consent, a User shall not, directly or indirectly, use, copy or distribute the Software for profit-making purposes. However, a User may use, copy or distribute the Software for the purpose of developing and distributing the Product through the distribution channels that Eisys offers (e.g., Internet service), or through the distribution channels that Eisys has granted approval of the distribution.
+3. Unless Eisys has preliminarily given written consent, a User shall not modify the Software, distribute the modified Software to a third person, or publish any codes of the Software to the third person upon the said modification.
+4. Unless Eisys has preliminarily given consent, a User shall not publish the Software in any written form, including books and magazines.
+
+Article 3 Indemnity
+1. Eisys shall be in no event liable to a User for any damages whatsoever caused by the use or the nonperformance of the Software, including any consequential, indirect or incidental damages.
+2. Eisys shall not warrant the quality, the performance or the suitability for any given usages of the Software.
+3. Eisys shall not be liable to permanently offer updated versions or remedy any failures, inoperability or other problems of the Software.
+
+Article 4 Attribution of Copyright and other rights
+All copyright and other intellectual property rights of the Software are reserved by Eisys, including without limitation the copyright laws of Japan and other countries.
+All copyright and other intellectual property rights of the data that constitute the Software (e.g., texts or images) are reserved by Eisys, or by the third person that holds and controls them. No User may obtain any such rights.
+
+Article 5 Countermeasures
+In the event a User contravenes these terms in this Agreement, Eisys may take countermeasures, including legal proceedings.
+
+Article 6 Support
+Eisys shall have no obligation to offer updated versions of the Software, to support installation or use of the Software, or to remedy any failures, inoperability or other problems that may arise with this Software.
+Eisys may, at its own discretion, offer a User updated versions of the Software and related information. In such cases, this Agreement shall also apply to any such updated versions and any such information.
+
+Article 7 Warranty
+Eisys shall not warrant the faultlessness or the certainty of the Software. Eisys shall not warrant the Software will run, even if used on a device with appropriate specifications.
+
+Article 8 Governing law
+This Agreement shall be governed by and interpreted in accordance with the law of Japan.
+
+Article 9 Court of competent jurisdiction
+The district court which has jurisdiction over the seat of Eisys shall have exclusive jurisdiction to hear and determine any dispute that may arise out of or in connection with this Agreement or the Software.
+
+Article 10 Other
+1. Eisys may at any time and at its own discretion change the specifications of the Software, this Agreement and any related information.
+2. Eisys may at any time and at its own discretion cease to publish the Software.
+
+Article 11 Supplementary provision
+The Agreement takes effect on Aug. 1, 2012.

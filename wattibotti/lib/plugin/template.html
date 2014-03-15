@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<!--
+	Title:
+	Author:
+	Licence:
+-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<base href="../"></base>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<script src="dest/almight.lib.js"></script>
+<!--
+	******** ゲームに読み込まれるCSS ********
+-->
+	<style type="text/css" data-append="yes">
+	#almight-template {
+		color: #000;
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるJavaScript ********
+-->
+	<script type="text/javascript" data-append="yes">
+$(function(){
+	/**
+	 * ここに処理を書く
+	 */
+
+	/**
+	 * タグの拡張
+	 */
+	$.extend(almight.tag, {
+		// タグを追加したい場合は、ここにタグ名と処理を書く
+		'template': function(params){
+
+			return 1;
+		}
+	});
+});
+	</script>
+</head>
+<body>
+
+<!--
+	******** ゲームに読み込まれるHTML ********
+-->
+<div id="almight-template" data-append="yes" data-selector="body" data-mobile-selector="body">
+	<!--
+	data-append属性に"yes"が指定されている要素が追加されます。
+
+	data-selecor属性にjQuery Selectorの形で挿入先を指定出来ます。
+	data-mobile-selector属性を指定すると、モバイル環境の場合はそちらが優先されます。
+	両方とも省略するとbodyが指定されます。
+	 -->
+</div>
+
+</body>
+</html>

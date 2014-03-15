@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<!--
+	Title: Almight設定画面 プラグイン
+	Author: EISYS, Inc. <http://almight.jp>
+	Licence: MIT License
+-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<base href="../"></base>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<script src="dest/almight.lib.js"></script>
+	<style type="text/css">
+	body {
+		background: #333;
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるCSS ********
+-->
+	<style type="text/css" data-append="yes">
+	#almight-setting-window {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		background-color: rgba(0,0,0,0.7);
+		z-index: 1000;
+		opacity: 0;
+		display: none;
+	}
+
+	#almight-setting-window .setting-section {
+		color: #fff;
+		text-align: left;
+		max-width: 640px;
+		margin: 20px auto;
+	}
+
+	#almight-setting-window .setting-section p {
+		padding-top: 10px;
+		padding-left: 15px;
+	}
+
+
+	#almight-setting-window .setting-section ul {
+		background-color: #fff;
+		margin: 5px 15px 10px 15px;
+		border: 1px solid #484848;
+		border-radius: 8px;
+		box-shadow: 0 1px 1px rgba(255,255,255,0.4);
+		list-style: none;
+	}
+
+	#almight-setting-window .setting-section li {
+		color: #000;
+		padding-left: 10px;
+		border-bottom: 1px solid #484848;
+		padding: 10px 7px;
+		height: 26px;
+	}
+
+	#almight-setting-window .setting-section li:last-child {
+		border-bottom: none;
+	}
+
+	#almight-setting-window .setting-section li:after {
+		content: '';
+		display: block;
+		clear: both;
+	}
+
+	#almight-setting-window .setting-section li .title {
+		min-width: 110px;
+		float: left;
+		height: 27px;
+		line-height: 28px;
+	}
+
+	#almight-setting-window .setting-section li .form {
+		padding-left: 130px;
+		padding-right: 10px;
+	}
+
+	#almight-setting-window .setting-section li .form > div {
+		float: right;
+	}
+
+	#almight-setting-window .list-button {
+		margin: 40px 15px 10px 15px;
+		padding: 10px;
+		border-radius: 8px;
+		border: 1px solid #484848;
+		font-weight: bold;
+		text-align: center;
+		text-shadow: 0px -1px 1px rgba(0,0,0,0.8);
+		background: #999a9d;
+		background: -webkit-gradient(linear, left top, left bottom, from(#aeaeae), to(#787c82));
+		background: -webkit-linear-gradient(#aeaeae 30%, #787c82 100%);
+		background: -moz-linear-gradient(#aeaeae 30%, #787c82 100%);
+		background: -ms-linear-gradient(#aeaeae 30%, #787c82 100%);
+		background: -o-linear-gradient(#aeaeae 30%, #787c82 100%);
+		background: linear-gradient(#aeaeae 30%, #787c82 100%);
+		box-shadow: inset 0 0 2px rgba(0,0,0,0.6), 1px 1px 1px rgba(255,255,255,0.3);
+	}
+
+	#almight-setting-window .list-button:active {
+		background: #5c5e64;
+		background: -webkit-gradient(linear, left top, left bottom, from(#787c82), to(#aeaeae));
+		background: -webkit-linear-gradient(#787c82 15%, #aeaeae 100%);
+		background: -moz-linear-gradient(#787c82 15%, #aeaeae 100%);
+		background: -ms-linear-gradient(#787c82 15%, #aeaeae 100%);
+		background: -o-linear-gradient(#787c82 15%, #aeaeae 100%);
+		background: linear-gradient(#787c82 15%, #aeaeae 100%);
+		box-shadow: inset 0 0 10px rgba(0,0,0,0.6), 1px 1px 1px rgba(255,255,255,0.3);
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるJavaScript ********
+-->
+	<script type="text/javascript" data-append="yes">
+$(function(){
+	if(typeof window.sf.alm_chspeed === 'number') {
+		almight.config.chspeed.normal = window.sf.alm_chspeed;
+	}
+	/**
+	 * 環境設定画面の表示・非表示
+	 */
+	$(Almight).on({
+		showSettingWindow: function() {
+			$('#almight-setting-window').css('display', 'block');
+
+			/**
+			 * 変数を設定
+			 */
+
+			// 画面効果チェックボックス
+			$('#setting-effect').prop('checked', almight.config.fx).trigger('change');
+
+			// 文字速度スライダー
+			$('#chspeed-slider').val(almight.config.chspeed.normal).trigger('change');
+
+			// BGMスライダー
+			$('#bgm-slider').val(almight.bgm.gvolume * 100).trigger('change');
+
+			// SEスライダー
+			$('#se-slider').val(almight.se[1].gvolume * 100).trigger('change');
+
+			// Voiceスライダー
+			$('#voice-slider').val(almight.se[0].gvolume * 100).trigger('change');
+
+			// BGVスライダー
+			$('#bgv-slider').val(almight.se[2].gvolume * 100).trigger('change');
+
+			setTimeout(function(){
+				$('#almight-setting-window').transition({
+					opacity: 1,
+					duration: 200
+				});
+			}, 0);
+		},
+
+		hideSettingWindow: function() {
+			$('#almight-setting-window').transition({
+				opacity: 0,
+				duration: 200,
+				complete: function(){
+					$('#almight-setting-window').hide();
+				}
+			});
+		}
+	});
+
+	/**
+	 * 戻るボタンを押した時の動作
+	 */
+	$('#almight-setting-window .back-button').on('tap', function(){
+		$(Almight).triggerHandler('hideSettingWindow');
+		return false;
+	});
+
+	$('#almight-setting-window').on({
+		// 右クリックで閉じる
+		contextmenu: function(){
+			$(Almight).triggerHandler('hideSettingWindow');
+			return false;
+		}
+	});
+
+	/**
+	 * UI部品をセット
+	 */
+	$('.setting-checkbox').almightCheckbox();
+	$('.setting-slider').almightSlider();
+
+	/**
+	 * スライダーが操作された時のイベント
+	 */
+	$('#chspeed-slider').on('slide', function(e){
+		almight.config.chspeed.normal = +$(this).val();
+		window.sf.alm_chspeed = almight.config.chspeed.normal;
+	});
+
+	$('#bgm-slider').on('slide', function(e){
+		almight.bgm.setGvolume($(this).val() / 100);
+	});
+
+	$('#se-slider').on('slide', function(e){
+		almight.se[1].setGvolume($(this).val() / 100);
+	});
+
+	$('#voice-slider').on('slide', function(e){
+		almight.se[0].setGvolume($(this).val() / 100);
+	});
+
+	$('#bgv-slider').on('slide', function(e){
+		almight.se[2].setGvolume($(this).val() / 100);
+	});
+
+	/**
+	 * デフォルトに戻す
+	 */
+	$('#setting-default').on('tap', function() {
+		// 画面効果チェックボックス
+		$('#setting-effect').prop('checked', true).trigger('change');
+
+		// 文字速度スライダー
+		$('#chspeed-slider').val(60).trigger('change');
+
+		// BGMスライダー
+		$('#bgm-slider').val(100).trigger('change');
+
+		// SEスライダー
+		$('#se-slider').val(100).trigger('change');
+
+		// Voiceスライダー
+		$('#voice-slider').val(100).trigger('change');
+
+		// bgvスライダー
+		$('#bgv-slider').val(100).trigger('change');
+
+		almight.UI.dialog({
+			text: '設定をデフォルトに戻しました',
+			button: [{
+				text: 'OK',
+				type: 'done'
+			}]
+		});
+		return false;
+	});
+
+	/**
+	 * タグの拡張
+	 */
+	$.extend(almight.tag, {
+		'showsettingwindow': function(){
+			$(Almight).triggerHandler('showSettingWindow');
+			return 1;
+		},
+
+		'hidesettingwindow': function(){
+			$(Almight).triggerHandler('hideSettingWindow');
+			return 1;
+		}
+	});
+
+});
+	</script>
+</head>
+<body>
+
+<!--
+	******** ゲームに読み込まれるHTML ********
+-->
+<div id="almight-setting-window" class="almight-window" data-append="yes" data-selector="#almight-container">
+
+	<!-- ナビゲーションバー -->
+	<div class="almight-navbar">
+		<div class="back-button">ゲームに戻る</div>
+		<span>環境設定</span>
+	</div>
+
+	<div class="setting-section">
+		<ul><!--
+			<li>
+				<span class="title">画面効果</span>
+				<div class="form">
+					<input class="setting-checkbox" type="checkbox" id="setting-effect">
+				</div>
+			</li>-->
+			<li>
+				<span class="title">文字速度</span>
+				<div class="form">
+					<input class="setting-slider" type="range" id="chspeed-slider" data-icon="message" data-popup="false" min="0" max="100">
+				</div>
+			</li>
+		</ul>
+
+		<p>サウンド設定</p>
+		<ul>
+			<li>
+				<span class="title">BGM音量</span>
+				<div class="form">
+					<input class="setting-slider" type="range" id="bgm-slider" data-icon="sound" data-unit="%" min="0" max="100">
+				</div>
+			</li>
+			<li>
+				<span class="title">SE音量</span>
+				<div class="form">
+					<input class="setting-slider" type="range" id="se-slider" data-icon="sound" data-unit="%" min="0" max="100">
+				</div>
+			</li>
+			<li>
+				<span class="title">ボイス音量</span>
+				<div class="form">
+					<input class="setting-slider" type="range" id="voice-slider" data-icon="sound" data-unit="%" min="0" max="100">
+				</div>
+			</li>
+			<li>
+				<span class="title">BGV音量</span>
+				<div class="form">
+					<input class="setting-slider" type="range" id="bgv-slider" data-icon="sound" data-unit="%" min="0" max="100">
+				</div>
+			</li>
+		</ul>
+
+		<div id="setting-default" class="list-button">デフォルトに戻す</div>
+	</div>
+
+</div>
+</body>
+</html>

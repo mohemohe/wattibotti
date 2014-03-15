@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<!--
+	Title: Almightサイドバー プラグイン
+	Author: EISYS, Inc. <http://almight.jp>
+	Licence: MIT License
+-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<base href="../"></base>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<script src="dest/almight.lib.js"></script>
+	<style type="text/css">
+	body {
+		background: #333;
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるCSS ********
+-->
+	<style type="text/css" data-append="yes">
+	#almight-sidebar-overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-image: url(plugin/sidebar/overlay.png);
+		opacity: 0;
+		display: none;
+		z-index: 2000;
+	}
+
+	#almight-sidebar-container {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 250px;
+		background-color: #333;
+		background-image: url(plugin/sidebar/menu_bg.png);
+		background-repeat: repeat;
+		box-shadow: 0 0 20px #000;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		display: none;
+		z-index: 3000;
+	}
+
+	.almight-sidebar {
+		padding-bottom: 20px;
+		box-shadow: 0 2px 4px rgba(0,0,0,.5);
+	}
+
+	.almight-sidebar ul {
+		margin-bottom: 15px;
+		background-image: url(plugin/sidebar/menu_bg.png);
+		background-repeat: repeat;
+	}
+
+	.almight-sidebar ul li {
+		position: relative;
+		color: #e2e2e2;
+		text-shadow: -1px -1px 1px rgba(0,0,0,0.5);
+		font-weight: bold;
+		font-size: 0.9em;
+		text-align: left;
+	}
+
+
+	.almight-sidebar ul li span {
+		padding-left: 1em;
+	}
+
+	.almight-sidebar ul li.list {
+		background-color: #333;
+		border-top: 1px solid #000;
+		height: 40px;
+		line-height: 40px;
+		cursor: pointer;
+	}
+
+	.almight-sidebar ul li.disable {
+		opacity: 0.25;
+		background-color: #000;
+		height: 40px;
+		line-height: 40px;
+		cursor: default;
+	}
+
+	.almight-sidebar ul li.list:last-child {
+		border-bottom: 1px solid #000;
+		box-shadow: 0px 1px 5px rgba(0,0,0,0.4);
+	}
+
+	.almight-sidebar ul li.list:before {
+		width: 100%;
+		height: 0;
+		display: block;
+		content: '';
+		border-top: 1px solid #474747;
+	}
+
+	.almight-sidebar #menu_bar {
+		width: 100%;
+		height: 23px;
+		background-image: url(plugin/sidebar/menu_bar.png);
+		background-repeat: no-repeat;
+		background-size: 300px 23px;
+	}
+
+	.almight-sidebar li.space {
+		box-shadow: inset 0px 1px 5px rgba(0,0,0,0.4);
+		border-top: 1px solid #000;
+		background-image: url(plugin/sidebar/space.png);
+		background-repeat: no-repeat;
+		background-size: 55px 15px;
+		background-position: center;
+		height: 20px;
+		background-color: rgba(0,0,0,0);
+	}
+
+	.almight-sidebar li.activelist {
+		border-top: 1px solid #000;
+		height: 40px;
+		line-height: 40px;
+		background-color: #2da5fb;
+		box-shadow: inset 0px 0px 25px rgba(0,0,0,0.7), inset 0px 0px 5px rgba(0,0,0,0.7);
+	}
+
+	.almight-sidebar .round-red {
+		margin: 17px auto 0 auto;
+		width: 80%;
+		padding: 10px 3%;
+		text-align: center;
+		font-weight: bold;
+		font-size: 0.9em;
+		color: #fff;
+		text-shadow: -1px -1px 0 rgba(0,0,0,0.5);
+		border: 1px solid #000;
+		background-color: #542121;
+		border-radius: 10px;
+		cursor: pointer;
+		box-shadow: 0px 1px 1px rgba(255,255,255,0.15), inset 0 1px 2px rgba(0,0,0,0.3);
+	}
+
+	.almight-sidebar .round-red.hover {
+		background-color: #3e0d0d;
+		box-shadow: 0px 1px 1px rgba(255,255,255,0.15), inset 0 0 5px rgba(0,0,0,0.3);
+	}
+
+	.almight-sidebar .round-red:active {
+		background-color: #a22727;
+		box-shadow: 0px 1px 1px rgba(255,255,255,0.15), inset 0 0 3px rgba(0,0,0,0.3);
+	}
+
+	.almight-sidebar .round-black {
+		margin: 17px auto 0 auto;
+		width: 80%;
+		padding: 10px 3%;
+		text-align: center;
+		font-weight: bold;
+		font-size: 0.9em;
+		color: #fff;
+		text-shadow: -1px -1px 0 rgba(0,0,0,0.5);
+		border: 1px solid #000;
+		background-color: #373738;
+		border-radius: 10px;
+		cursor: pointer;
+		box-shadow: 0px 1px 1px rgba(255,255,255,0.15), inset 0px 1px 2px rgba(0,0,0,0.3);
+	}
+
+	.almight-sidebar .round-black.hover {
+		background-color: #252525;
+		box-shadow: 0px 1px 1px rgba(255,255,255,0.15), inset 0px 0 5px rgba(0,0,0,0.7);
+	}
+
+	.almight-sidebar .round-black:active {
+		background-color: #2da5fb;
+		box-shadow: 0px 1px 1px rgba(255,255,255,0.15), inset 0px 0 10px rgba(0,0,0,0.4);
+	}
+
+	.almight-sidebar ul li span {
+		background-repeat: no-repeat;
+		background-size: 25px 25px;
+		background-position: 7px center;
+		padding-left: 35px;
+		height: 95%;
+		display: inline-block;
+	}
+
+	.almight-button-quicksave {
+		background-image: url(plugin/sidebar/quicksave.png);
+	}
+
+	.almight-button-quickload {
+		background-image: url(plugin/sidebar/quickload.png);
+	}
+
+	.almight-button-skipmode {
+		background-image: url(plugin/sidebar/skip.png);
+	}
+
+	.almight-button-automode {
+		background-image: url(plugin/sidebar/auto.png);
+	}
+
+	.almight-button-showhistory {
+		background-image: url(plugin/sidebar/history.png);
+	}
+
+	.almight-button-save {
+		background-image: url(plugin/sidebar/save.png);
+	}
+
+	.almight-button-load {
+		background-image: url(plugin/sidebar/load.png);
+	}
+
+	.almight-button-settings {
+		background-image: url(plugin/sidebar/settings.png);
+	}
+
+	.almight-button-scene {
+		background-image: url(plugin/sidebar/scene.png);
+	}
+
+	.almight-button-cgmode {
+		background-image: url(plugin/sidebar/cgmode.png);
+	}
+
+	.almight-button-hidemessage {
+		background-image: url(plugin/sidebar/hide_message.png);
+	}
+
+	.almight-sidebar .controller {
+		display: none;
+	}
+
+	#list-extend, #list-scene, #list-cgmode {
+		display: none;
+	}
+	</style>
+
+	<script type="text/javascript">
+	// このスクリプトは確認用です。実際には読み込まれません
+	var almight = {
+		stage: {
+			stageTop: 0,
+			stageHeight: 500
+		}
+	};
+	var Almight = {
+		Platform: {}
+	};
+	</script>
+
+<!--
+	******** ゲームに読み込まれるJavaScript ********
+-->
+	<script type="text/javascript" data-append="yes">
+$(function(){
+	/**
+	 * サイドバーの表示・非表示
+	 */
+	var width = 250; // サイドバーの幅
+	var sidebar = $('#almight-sidebar-container');
+	var overlay = $('#almight-sidebar-overlay');
+
+	// サイドバーの位置を設定
+	sidebar.css({
+		x: (width + 20) * -1,
+		display: 'block'
+	})
+
+	// サイドバーの表示・非表示
+	var toggleSidebar = function() {
+		// アニメーション中ならfalseを返す
+		if(!!sidebar.queue('fx').length) {
+			return false;
+		}
+
+		if(!sidebar.hasClass('open')) {
+			// almight-windowクラスのdivが表示されている状態ならfalseを返す
+			if($('.almight-window').is(':visible')) {
+				return false;
+			}
+
+			// サイドバーを表示
+			$('.almight-sidebar .activelist').attr('class', 'list');
+			sidebar.addClass('open').css({
+				y: 0,
+				height: '100%'
+			}).transition({
+				x: 0,
+				duration: 300,
+				easing: 'ease'
+			});
+
+			overlay.css('display', 'block').transition({
+				opacity: 1,
+				duration: 200
+			});
+
+			almight.stage.canClick = false;
+
+		} else {
+			// サイドバーを非表示
+			sidebar.removeClass('open').transition({
+				x: (width + 20) * -1,
+				duration: 300,
+				easing: 'ease'
+			});
+
+			overlay.transition({
+				opacity: 0,
+				duration: 200,
+				complete: function(){
+					overlay.hide();
+					almight.stage.canClick = true;
+					$(Almight).triggerHandler('hideSidebar');
+				}
+			});
+		}
+
+		// ブラウザの右クリックメニューを表示させない
+		return false;
+	};
+
+	/**
+	 * サイドバーのイベントを登録
+	 */
+	if(Almight.Platform.touch) {
+		// タッチUIなら
+		$(window).on({
+			// 右クリックの制御
+			swiperight: toggleSidebar
+		});
+
+		overlay.on({
+			tap: toggleSidebar,
+			swipeleft: toggleSidebar
+		});
+	} else {
+		// マウスUIなら
+		$(window).on({
+			// 右クリックの制御
+			contextmenu: toggleSidebar
+		});
+
+		overlay.on({
+			click: toggleSidebar
+		});
+	}
+
+	$(Almight).on('toggleSidebar', toggleSidebar);
+
+	$(Almight).on({
+	/**
+	 * クイックセーブ・クイックロード
+	 */
+		quickSave: function() {
+			if(almight.saveBookmark(0) === false) {
+				almight.UI.dialog({
+					text: 'クリック待ち記号が表示されているときにセーブ出来ます',
+					button: [{
+						text: 'OK',
+						type: 'done'
+					}]
+				});
+			}else{
+				almight.saveBookmark(0);
+			}
+		},
+
+		quickLoad: function() {
+			if(almight.getBookmark(0) === null){
+				almight.UI.dialog({
+					text: 'セーブデータがありません',
+					button: [{
+						text: 'OK',
+						type: 'done'
+					}]
+				});
+			}else if(almight.loadBookmark(0) === false){
+				almight.UI.dialog({
+					text: 'クリック待ち記号が表示されているときにロード出来ます',
+					button: [{
+						text: 'OK',
+						type: 'done'
+					}]
+				});
+			}else{
+				almight.loadBookmark(0);
+			}
+		},
+
+	/**
+	 * スキップ
+	 */
+		setSkip: function() {
+			almight.stage.toggleSkipmode(50, true);
+		},
+
+	/**
+	 * オート
+	 */
+		setAuto: function() {
+			almight.stage.toggleAutomode(1500, true);
+		},
+
+	/**
+	 * メッセージウィンドウを非表示
+	 */
+		hideMessage: function(){
+			almight.script.tag.hidemessage();
+		},
+
+	/**
+	 * サイドバーコントローラ
+	 */
+		showSidebarController: function() {
+			$('#almight-sidebar-container .controller').show();
+		},
+
+		hideSidebarController: function() {
+			$('#almight-sidebar-container .controller').hide();
+		}
+	});
+
+	/**
+	 * ゲームをやめるダイアログ
+	 */
+	$(Almight).on('onExit', function() {
+		almight.UI.dialog({
+			text: 'ゲームを終了しますか？',
+			button: [{
+				text: 'キャンセル'
+			}, {
+				text: 'OK',
+				type: 'done',
+				callback: function(){
+					almight.exit();
+				}
+			}]
+		});
+	});
+
+	/**
+	 * サイドバーのリストをクリックした時の処理
+	 */
+	$('.almight-sidebar .list').on('tap', function(){
+		if($(this).hasClass('list') && !$(this).hasClass('disable')) {
+			// アクティブにする
+			$(this).attr('class', 'activelist');
+
+			// data-trigger属性のトリガーを発火
+			var trigger = $(this).attr('data-trigger');
+			if(trigger !== undefined ) $(Almight).triggerHandler(trigger);
+
+			// サイドバーを閉める
+			toggleSidebar();
+		}
+
+		return false;
+	});
+
+	/**
+	 * サイドバーのボタンをクリックした時の処理
+	 */
+	$('.almight-sidebar .button').on('tap', function(){
+		// data-trigger属性のトリガーを発火
+		var trigger = $(this).attr('data-trigger');
+		if(trigger !== undefined ) $(Almight).triggerHandler(trigger);
+	});
+
+	/**
+	 * タグの拡張
+	 */
+	$.extend(almight.tag, {
+		'togglesidebar': function(){
+			$(Almight).triggerHandler('toggleSidebar');
+			return 1;
+		},
+
+		'showcontroller': function(){
+			$(Almight).triggerHandler('showSidebarController');
+			return 1;
+		},
+
+		'hidecontroller': function(){
+			$(Almight).triggerHandler('hideSidebarController');
+			return 1;
+		},
+
+		'enablesave': function(){
+			$('#list-quicksave, #list-save').removeClass('disable');
+			return 1;
+		},
+
+		'disablesave': function(){
+			$('#list-quicksave, #list-save').addClass('disable');
+			return 1;
+		},
+
+		'enableload': function(){
+			$('#list-quickload, #list-load').removeClass('disable');
+			return 1;
+		},
+
+		'disableload': function(){
+			$('#list-quickload, #list-load').addClass('disable');
+			return 1;
+		}
+	});
+
+	// ゲームのロードが完了した時に、自動的にセーブ・ロードとコントローラーを表示する
+	$(Almight).on('loaded', function(){
+		almight.tag.showcontroller();
+		almight.tag.enablesave();
+		almight.tag.enableload();
+	});
+
+	// CGモード、シーン回想プラグインが読み込まれていれば表示
+	if(almight.tag.showcgmodewindow) {
+		$('#list-cgmode, #list-extend').show();
+	}
+	if(almight.tag.showscenemodewindow) {
+		$('#list-scene, #list-extend').show();
+	}
+});
+	</script>
+</head>
+<body>
+
+<!--
+	******** ゲームに読み込まれるHTML ********
+-->
+<div id="almight-sidebar-container" data-append="yes" data-selector="#almight-container">
+	<div class="almight-sidebar">
+		<div id="menu_bar"></div>
+		<ul>
+			<li class="list disable controller" id="list-quicksave" data-trigger="quickSave"><span class="almight-button-quicksave">クイックセーブ</li>
+			<li class="list controller" id="list-quickload" data-trigger="quickLoad"><span class="almight-button-quickload">クイックロード</span></li>
+			<li class="list controller" data-trigger="setSkip"><span class="almight-button-skipmode">スキップ</span></li>
+			<li class="list controller" data-trigger="setAuto"><span class="almight-button-automode">オートモード</span></li>
+			<li class="list controller" data-trigger="showHistoryWindow"><span class="almight-button-showhistory">ヒストリー表示</span></li>
+			<li class="list controller" data-trigger="hideMessage"><span class="almight-button-hidemessage">メッセージ非表示</span></li>
+			<li class="space controller"></li>
+			<li class="list disable" id="list-save" data-trigger="showSaveWindow"><span class="almight-button-save">セーブ</span></li>
+			<li class="list" id="list-load" data-trigger="showLoadWindow"><span class="almight-button-load">ロード</span></li>
+			<li class="list" data-trigger="showSettingWindow"><span class="almight-button-settings">環境設定</span></li>
+			<li class="space" id="list-extend"></li>
+			<li class="list" data-type="scene" id="list-scene" data-trigger="showScenemodeWindow"><span class="almight-button-scene">シーン回想</span></li>
+			<li class="list" data-type="cgmode" id="list-cgmode" data-trigger="showCgmodeWindow"><span class="almight-button-cgmode">CGモード</span></li>
+		</ul>
+
+		<div class="round-red button" data-trigger="onExit">ゲームをやめる</div>
+		<!-- <div class="round-black button" data-type="backanchor">タイトルに戻る</div> -->
+	</div>
+</div>
+
+<div id="almight-sidebar-overlay" data-append="yes" data-selector="#almight-container"></div>
+
+</body>
+</html>

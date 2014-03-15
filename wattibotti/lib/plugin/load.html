@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<!--
+	Title: Almightロード画面 プラグイン
+	Author: EISYS, Inc. <http://almight.jp>
+	Licence: MIT License
+-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<base href="../"></base>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<script src="dest/almight.lib.js"></script>
+	<style type="text/css">
+	body {
+		background: #333;
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるCSS ********
+-->
+	<style type="text/css" data-append="yes">
+	#almight-load-window {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		background-color: rgba(0,0,0,0.7);
+		z-index: 1000;
+		opacity: 0;
+		display: none;
+	}
+
+	#almight-load-box-template {
+		display: none;
+	}
+
+	#almight-load-window ul {
+		margin: 20px 0 20px 0;
+		-webkit-transform-style: preserve-3d; /* これがないとiOS 5でスクロールが正しく表示されないので消さない */
+	}
+
+	/* データスロットのデザインはここ */
+	#almight-load-window li {
+		position: relative;
+		margin: 9px 3%;
+		padding: 7px;
+		width: 90%;
+		min-height: 60px;
+		font-size: 1em;
+		background-color: #fff;
+		text-align: left;
+		border-bottom: 2px solid #b2b2b2;
+		border-radius: 5px;
+		box-shadow: 3px 3px 4px rgba(0,0,0,0.7);
+	}
+
+	#almight-load-window li:after { /* ClearFix */
+		content: '';
+		display: block;
+		clear: both;
+	}
+
+	#almight-load-window li.almight-slot {
+		cursor: pointer;
+	}
+
+
+	/* サムネイルのデザイン */
+	#almight-load-window .thumb {
+		display: inline-block;
+		position: relative;
+		float: left;
+		background-position: center;
+		background-size: cover;
+		background-repeat: no-repeat;
+		background-color: #777;
+		margin-right: 7px;
+		width: 90px;
+		height: 67px;
+	}
+
+	#almight-load-window .thumb:after {
+		position: absolute;
+		display: block;
+		content: '';
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.6), inset 0 0 25px rgba(0, 0, 0, 0.8);
+	}
+
+	/* 空サムネイルのデザインはここ */
+	#almight-load-window .empty_thumb {
+		position: relative;
+		display: inline-block;
+		float: left;
+		margin-right: 7px;
+		width: 90px;
+		height: 67px;
+	}
+
+	#almight-load-window .empty_thumb:after {
+		position: absolute;
+		display: block;
+		content: '';
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+	}
+
+	#almight-load-window .thumb_none {
+		position: relative;
+		width: 90px;
+		height: 67px;
+		background-image: url(plugin/saveload/nodata.png);
+		background-repeat: no-repeat;
+		background-size: 150px 100px;
+		background-position: 0 0;
+	}
+
+	#almight-load-window .thumb_none span {
+		position: absolute;
+		right: 5px;
+		bottom: 0px;
+		color: #a7a7a7;
+		font-size: 2em;
+		text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.8);
+		font-family: futura, helvetica, arial, sans-serif;
+	}
+
+	/* 詳細テキスト */
+	#almight-load-window .title {
+		font-size: 0.9em;
+		word-wrap: break-word;
+		padding-bottom: 3px;
+	}
+
+	#almight-load-window .notitle {
+		color: #7c7c7c;
+		word-wrap: break-word;
+	}
+
+	#almight-load-window .date {
+		color: #666666;
+		font-size: 0.8em;
+		line-height: 1.3em;
+	}
+
+	/* レスポンシブ */
+	@media screen and (min-width: 630px) {
+		/* iPad, PC */
+		#almight-load-window ul {
+			display: block;
+			text-align: center;
+		}
+
+		#almight-load-window li {
+			display: inline-block;
+			vertical-align: top;
+			text-align: left;
+			margin: 10px 1.5%;
+			padding: 5px;
+			width: 26%;
+			max-width: 200px;
+		}
+
+		/* サムネイルのデザインはここ */
+		#almight-load-window .thumb {
+			width: 100%;
+			height: 110px;
+		}
+
+		/* 空サムネイルのデザインはここ */
+		#almight-load-window .empty_thumb {
+			width: 100%;
+			height: 110px;
+		}
+
+		#almight-load-window .thumb_none {
+			background-image: url(plugin/saveload/nodata_big.png);
+			background-size: 300px 300px;
+			background-position: 0 8%;
+			width: 100%;
+			height: 100%;
+		}
+
+		#almight-load-window .thumb_none span {
+			font-size: 2.5em;
+			line-height: 1.4em;
+		}
+
+		#almight-load-window .title {
+			clear: both;
+			padding: 10px 0;
+			height: 2em;
+			overflow: hidden;
+		}
+
+		#almight-load-window .date {
+			height: 1em;
+		}
+
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるJavaScript ********
+-->
+	<script type="text/javascript" data-append="yes">
+$(function(){
+	var thumb_tmp = $('#almight-load-thumb-template').html();
+	var nodata_tmp = $('#almight-load-nodata-template').html();
+
+	/**
+	 * ロード画面の表示・非表示
+	 */
+	$(Almight).on({
+		showLoadWindow: function() {
+			// セーブデータを作成
+			var dom = '';
+
+			for(var i=1;i<=almight.config.bookmarkCount;i++) {
+				html = '';
+
+				if(almight.getBookmarkExist(i)) {
+					// セーブデータがある
+					html = thumb_tmp;
+					html = html.replace(/\{\{i\}\}/g, i);
+					html = html.replace(/\{\{title\}\}/g, almight.getBookmarkName(i));
+					html = html.replace(/\{\{date\}\}/g, almight.getBookmarkDate(i));
+					html = html.replace(/\{\{src\}\}/g, almight.getBookmarkScreenshot(i));
+
+				} else {
+					// セーブデータがない
+					html = nodata_tmp;
+					html = html.replace(/\{\{i\}\}/g, i);
+				}
+
+				dom += html;
+			}
+
+			$('#almight-load-box').empty().html(dom);
+
+			// クリックした時のイベントを設定
+			$('#almight-load-box li').on('tap', function() {
+				// セーブデータが無ければfalse
+				if(!$(this).hasClass('almight-slot')) {
+					return false;
+				}
+
+				var i = Number($(this).attr('data-slot'));
+
+				almight.UI.dialog({
+					text: 'スロット' +i+ 'をロードしますか？',
+					button: [{
+						text: 'キャンセル'
+					}, {
+						text: 'OK',
+						type: 'done',
+						callback: function(){
+							if(almight.loadBookmark(i) === false) {
+								almight.UI.dialog({
+									text: 'クリック待ち記号が表示されているときにロード出来ます',
+									button: [{
+										text: 'OK',
+										type: 'done',
+										callback: function(){
+											$(Almight).triggerHandler('hideLoadWindow');
+										}
+									}]
+								});
+
+							} else {
+								$(Almight).triggerHandler('hideLoadWindow');
+							}
+						}
+					}]
+				})
+
+				return false;
+			});
+
+			setTimeout(function(){
+				$('#almight-load-window').css('display', 'block').transition({
+					opacity: 1,
+					duration: 200
+				});
+			}, 0);
+		},
+
+		hideLoadWindow: function() {
+			$('#almight-load-window').transition({
+				opacity: 0,
+				duration: 200,
+				complete: function(){
+					$('#almight-load-window').hide();
+				}
+			});
+		}
+	});
+
+	/**
+	 * 戻るボタンを押した時の動作
+	 */
+	$('#almight-load-window .back-button').on('tap', function(){
+		$(Almight).triggerHandler('hideLoadWindow');
+		return false;
+	});
+
+	$('#almight-load-window').on({
+		// 右クリックで閉じる
+		contextmenu: function(){
+			$(Almight).triggerHandler('hideLoadWindow');
+			return false;
+		}
+	});
+
+	/**
+	 * タグの拡張
+	 */
+	$.extend(almight.tag, {
+		'showloadwindow': function(){
+			$(Almight).triggerHandler('showLoadWindow');
+			return 1;
+		},
+
+		'hideloadwindow': function(){
+			$(Almight).triggerHandler('hideLoadWindow');
+			return 1;
+		}
+	});
+
+});
+	</script>
+</head>
+<body>
+
+<!--
+	******** ゲームに読み込まれるHTML ********
+-->
+<div id="almight-load-window" class="almight-window" data-append="yes" data-selector="#almight-container">
+
+	<!-- ナビゲーションバー -->
+	<div class="almight-navbar">
+		<div class="back-button">ゲームに戻る</div>
+		<span>ロード</span>
+	</div>
+
+	<!-- テンプレート  -->
+	<script type="text/template" id="almight-load-thumb-template">
+		<li data-slot="{{i}}" class="almight-slot">
+			<div class="thumb" style="background-image: url({{src}});"></div>
+			<div class="title">{{title}}</div>
+			<div class="date">{{date}}</div>
+		</li>
+	</script>
+
+	<script type="text/template" id="almight-load-nodata-template">
+		<li data-slot="{{i}}">
+			<div class="empty_thumb"><div class="thumb_none"><span>{{i}}</span></div></div>
+			<div class="title">No Data</div>
+			<div class="date"></div>
+		</li>
+	</script>
+
+	<ul id="almight-load-box"></ul>
+
+</div>
+</body>
+</html>

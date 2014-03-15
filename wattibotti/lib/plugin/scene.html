@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<!--
+	Title:
+	Author:
+	Licence:
+-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<base href="../"></base>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<script src="dest/almight.lib.js"></script>
+<!--
+	******** ゲームに読み込まれるCSS ********
+-->
+	<style type="text/css" data-append="yes">
+	#almight-scenemode-window {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		overflow: auto;
+		-webkit-overflow-scrolling: touch;
+		background-color: rgba(0,0,0,0.7);
+		z-index: 1000;
+		opacity: 0;
+		display: none;
+	}
+
+	#almight-scenemode-box {
+		text-align: center;
+		padding: 20px 0;
+	}
+
+	#almight-scenemode-window li.list {
+		position: relative;
+		height: 1.5em;
+		margin: 15px auto;
+		padding: 10px;
+		padding-left: 25px;
+		font-size: 0.9em;
+		background-color: #fff;
+		background-image: url(plugin/scene/list_rightarrow.png);
+		background-repeat: no-repeat;
+		background-position: 99% center;
+		background-size: 20px 20px;
+		border: 3px solid #fff;
+		border-radius: 5px;
+		cursor: pointer;
+		text-align: left;
+		list-style-type: none;
+		-webkit-box-shadow: inset 0px 0px 5px rgba(0,0,0,0.5), 2px 1px 8px rgba(0,0,0,0.5);
+		box-shadow: inset 0px 0px 5px rgba(0,0,0,0.5), 2px 1px 8px rgba(0,0,0,0.5);
+		-webkit-transform-style: preserve-3d; /* iOSでスクロールした時に表示されない対策 */
+	}
+
+	#almight-scenemode-window li.list:before {
+		content: '';
+		display: block;
+		width: 10px;
+		height: 10px;
+		background-color: #2da5fb;
+		position: absolute;
+		left: 10px;
+		top: 14px;
+		-webkit-box-shadow: inset 1px 1px 0 rgba(0,0,0,0.5);
+		box-shadow: inset 1px 1px 0 rgba(0,0,0,0.5);
+		-webkit-transform: rotateZ(45deg);
+	}
+
+	#almight-scenemode-window li:after { /* ClearFix */
+		content: '';
+		display: block;
+		clear: both;
+	}
+
+	#almight-scenemode-window li.no-list {
+		position: relative;
+		height: 1.3em;
+		margin: 15px auto;
+		padding: 10px;
+		font-size: 1.1em;
+		text-align: left;
+		line-height: 1.4em;
+		color: #7c7c7c;
+		text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.8);
+		background-image: url(plugin/scene/nolist.png);
+		background-repeat: no-repeat;
+		background-size: cover;
+		background-position: left center;
+		border: 3px solid #fff;
+		border-radius: 5px;
+		-webkit-box-shadow: inset 0px 0px 5px rgba(0,0,0,0.5), 2px 1px 8px rgba(0,0,0,0.5);
+		box-shadow: inset 0px 0px 5px rgba(0,0,0,0.5), 2px 1px 8px rgba(0,0,0,0.5);
+		-webkit-transform-style: preserve-3d; /* iOSでスクロールした時に表示されない対策 */
+	}
+
+	#almight-scenemode-window li.no-list span {
+		position: absolute;
+		top: 0;
+		right: 10px;
+		font-size: 1.4em;
+		line-height: 1.7em;
+		color: #aaaaaa;
+		text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.8);
+		font-family: futura, helvetica, arial, sans-serif;
+	}
+	</style>
+
+<!--
+	******** ゲームに読み込まれるJavaScript ********
+-->
+	<script type="text/javascript" data-append="yes">
+$(function(){
+	var list_tmp = $('#almight-scenemode-list-template').html();
+	var nolist_tmp = $('#almight-scenemode-nolist-template').html();
+	$(Almight).on({
+		showScenemodeWindow: function() {
+			// シーンデータを作成
+			var scenedata = {
+				slots: [
+					{
+					open: 'sf.recollection1',
+					title: '回想その1',
+					target: '*recollection1',
+					storage: 'first.ks'
+					},
+					{
+					open: 'sf.recollection2',
+					title: '回想その2',
+					target: '*recollection2',
+					storage: 'first.ks'
+					},
+					{
+					open: 'sf.recollection3',
+					title: '回想その3',
+					target: '*recollection3',
+					storage: 'first.ks'
+					}
+				]};
+
+			for(var i=0;i<scenedata.slots.length;i++) {
+				if(eval(scenedata.slots[i].open)) var open = true;
+				else var open = false;
+				
+				scenedata.slots[i].open = open;
+			}
+
+			var dom = '';
+
+			for(var i=0;i<scenedata.slots.length;i++) {
+				html = '';
+
+				if(eval(scenedata.slots[i].open)) {
+					html = list_tmp;
+					html = html.replace(/\{\{scene_storage\}\}/g, scenedata.slots[i].storage);
+					html = html.replace(/\{\{scene_target\}\}/g, scenedata.slots[i].target);
+					html = html.replace(/\{\{scene_title\}\}/g, scenedata.slots[i].title);
+					dom += html;
+				} else {
+					html = nolist_tmp;
+					html = html.replace(/\{\{i\}\}/g, i+1);
+					dom += html;
+				}
+			}
+
+			$('#almight-scenemode-box').empty().html(dom);
+
+			// クリックした時の設定
+			$('#almight-scenemode-window .list').on('tap', function() {
+				// クリック待ちのときだけシーン回想にジャンプする
+				if(almight.userwait){
+					$(Almight).triggerHandler('hideScenemodeWindow');
+					$('#almight-choices-window').remove();
+					almight.script.command('@cancelskip', false);
+					almight.script.command('@cancelauto', false);
+					almight.script.command('@hidetitle time=0', false);
+					almight.script.command('@disablesave', false);
+					almight.script.command('@disableload', false);
+					almight.script.command('@showcontroller', false);
+					almight.script.command('@freeimage all=all page=fore', false);
+					almight.script.command('@freeimage all=all page=back', false);
+					almight.script.command('@ct', false);
+					almight.script.command('@stopbgm', false);
+					for(i=0; i<almight.config.sound.seCount; i++) almight.se[i].setStop();
+					tf.scene_mode = true;
+					f.kaisou = 1;
+					almight.script.queue({
+						'_type_': 'jump',
+						'storage': $(this).attr('data-storage'),
+						'target': $(this).attr('data-target')
+					});
+					almight.script.dequeue();
+					return false;
+				}else{
+					almight.UI.dialog({
+						text: 'クリック待ち記号が表示されている時に回想シーンにジャンプできます',
+						button: [{
+							text: 'OK',
+							type: 'done',
+							callback: function(){
+								$(Almight).triggerHandler('hideScenemodeWindow');
+							}
+						}]
+					});
+				}
+			});
+
+			setTimeout(function(){
+				$('#almight-scenemode-window').css('display', 'block').transition({
+					opacity: 1,
+					duration: 200,
+				});
+			}, 0);
+		},
+		hideScenemodeWindow: function() {
+			$('#almight-scenemode-window').transition({
+				opacity: 0,
+				duration: 200,
+				complete: function(){
+					$('#almight-scenemode-window').hide();
+				}
+			});
+		},
+	});
+
+	/**
+	 * 戻るボタンを押した時の動作
+	 */
+	$('#almight-scenemode-window .back-button').on('tap', function(){
+		$(Almight).triggerHandler('hideScenemodeWindow');
+		return false;
+	});
+
+	$('#almight-scenemode-window').on({
+		// 右クリックで閉じる
+		contextmenu: function(){
+			$(Almight).triggerHandler('hideScenemodeWindow');
+			return false;
+		}
+	});
+
+	/**
+	 * タグの拡張
+	 */
+	$.extend(almight.tag, {
+		// タグを追加したい場合は、ここにタグ名と処理を書く
+		'showscenemodewindow': function(){
+			$(Almight).triggerHandler('showScenemodeWindow');
+			return 1;
+		},
+		'hidescenemodewindow': function(){
+			$(Almight).triggerHandler('hideScenemodeWindow');
+			return 1;
+		}
+	});
+});
+	</script>
+</head>
+<body>
+
+<!--
+	******** ゲームに読み込まれるHTML ********
+-->
+<div id="almight-scenemode-window" class="almight-window" data-append="yes" data-selector="#almight-container">
+
+	<!-- ナビゲーションバー -->
+	<div class="almight-navbar">
+		<div class="back-button">ゲームに戻る</div>
+		<span>シーン回想</span>
+	</div>
+		<script type="text/template" id="almight-scenemode-list-template">
+			<li class="list" data-target="{{scene_target}}" data-storage="{{scene_storage}}">{{scene_title}}</li>
+		</script>
+
+		<script type="text/template" id="almight-scenemode-nolist-template">
+			<li class="no-list">Close<span>{{i}}</span></li>
+		</script>
+
+	<div id="almight-scenemode-box"></div>
+</body>
+</html>
